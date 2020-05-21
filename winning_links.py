@@ -12,10 +12,8 @@ def is_ours(link):
     return _(link) == 'referral.ours'
 
 
-def find_winning_links(log_file_name):
-    with open(log_file_name) as log_fh:
-        log = json.loads(log_fh.read())
-
+def find_winning_links(log_string):
+    log = json.loads(log_string)
     winning_links = []
     for hop in filter(lambda _: is_checkout(['document.location']), log):
         log_this_client = list(filter(lambda _: _['client_id'] == hop['client_id'], log))
@@ -33,4 +31,6 @@ def find_winning_links(log_file_name):
 
 
 if __name__ == '__main__':
-    print(find_winning_links('log.json'))
+    with open('log.json') as log_fh:
+        log_string = log_fh.read()
+    print(find_winning_links(log_string))
