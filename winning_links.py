@@ -19,11 +19,13 @@ def is_theirs(link):
     return (result.hostname == 'ad.theirs1.com') or (result.hostname == 'ad.theirs2.com')
 
 
-def find_winning_links(log_str):
+def find_winning_links(log_str, client_ids=False):
+
     log = json.loads(log_str)
     winning_links = []
     for hop in filter(lambda _: is_checkout(_['document.location']), log):
-        log_this_client = list(filter(lambda _: _['client_id'] == hop['client_id'], log))
+        client = hop['client_id']
+        log_this_client = list(filter(lambda _: _['client_id'] == client, log))
         for hop_this in log_this_client:
             winning_link_candidate = hop['document.referer']
             for hop_ in log_this_client:
@@ -31,7 +33,10 @@ def find_winning_links(log_str):
                     if dateutil.parser.parse(hop_['date']) < dateutil.parser.parse(hop_this['date']):
                         winning_link_candidate = hop_['document.referer']
             if is_ours(winning_link_candidate):
-                winning_links.append(winning_link_candidate)
+                if client_ids:
+                    winning_links.append((client, winning_link_candidate))
+                else:
+                    winning_links.append(winning_link_candidate)
                 break
             if is_theirs(winning_link_candidate):
                 break

@@ -164,3 +164,43 @@ class TestFindWinningLinks(unittest.TestCase):
             'https://referal.ours.com/?ref=0xc0ffee',
             'https://referal.ours.com/?ref=0xc0ffee',
         ])
+
+    def test_find_winning_links__client1_ours_to_checkout__client2_theirs1_to_checkout(self):
+        log_str = '''[
+    {
+        "client_id": "user15",
+        "User-Agent": "Firefox 59",
+        "document.location": "https://shop.com/checkout",
+        "document.referer": "https://referal.ours.com/?ref=0xc0ffee",
+        "date": "2018-04-02T07:59:13.286000Z"
+    },
+    {
+        "client_id": "user16",
+        "User-Agent": "Firefox 59",
+        "document.location": "https://shop.com/checkout",
+        "document.referer": "https://ad.theirs1.com/?src=q1w2e3r4",
+        "date": "2018-04-03T07:59:13.286000Z"
+    }
+]'''
+        self.assertTrue(('user15', 'https://referal.ours.com/?ref=0xc0ffee') in fwl(log_str, client_ids=True))
+        self.assertFalse(('user16', 'https://ad.theirs1.com/?src=q1w2e3r4') in fwl(log_str, client_ids=True))
+
+    def test_find_winning_links__client1_ours_to_checkout__client2_ours_to_checkout(self):
+        log_str = '''[
+    {
+        "client_id": "user15",
+        "User-Agent": "Firefox 59",
+        "document.location": "https://shop.com/checkout",
+        "document.referer": "https://referal.ours.com/?ref=0xc0ffee",
+        "date": "2018-04-02T07:59:13.286000Z"
+    },
+    {
+        "client_id": "user16",
+        "User-Agent": "Firefox 59",
+        "document.location": "https://shop.com/checkout",
+        "document.referer": "https://referal.ours.com/?ref=123hexcode",
+        "date": "2018-04-03T07:59:13.286000Z"
+    }
+]'''
+        self.assertTrue(('user15', 'https://referal.ours.com/?ref=0xc0ffee') in fwl(log_str, client_ids=True))
+        self.assertTrue(('user16', 'https://referal.ours.com/?ref=123hexcode') in fwl(log_str, client_ids=True))
