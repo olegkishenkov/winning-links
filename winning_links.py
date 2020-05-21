@@ -27,6 +27,18 @@ def find_winning_links(
         referer_key='document.referer',
         date_key='date',
 ):
+    """
+    finds affiliate links that led a client to a shop
+    :param log_str: a JSON-serialized log string with an array of objects with the following attributes: client_key,
+    location_key, referer_key, date_key
+    :param client_ids:
+    :param client_key:
+    :param location_key:
+    :param referer_key:
+    :param date_key:
+    :return: a list of affiliate links or if client_ids is set to True a list of tuples of the form (<client-id>,
+    <affiliate-link>)
+    """
 
     log = json.loads(log_str)
     winning_links = []
