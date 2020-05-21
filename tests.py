@@ -123,3 +123,44 @@ class TestFindWinningLinks(unittest.TestCase):
 ]'''
         links = fwl(log_str)
         self.assertEqual(links, [])
+
+    def test_find_winning_links__ours_to_cart_to_checkout_to_cart_to_checkout(self):
+        """
+        when a client reaches the checkout twice not leaving the shop, the affiliate link she
+        came to the shop with is counted twice
+        """
+        log_str = '''[
+    {
+        "client_id": "user15",
+        "User-Agent": "Firefox 59",
+        "document.location": "https://shop.com/cart",
+        "document.referer": "https://referal.ours.com/?ref=0xc0ffee",
+        "date": "2018-04-02T07:59:13.286000Z"
+    },
+    {
+        "client_id": "user15",
+        "User-Agent": "Firefox 59",
+        "document.location": "https://shop.com/checkout",
+        "document.referer": "https://shop.com/cart",
+        "date": "2018-04-03T07:59:13.286000Z"
+    },
+    {
+        "client_id": "user15",
+        "User-Agent": "Firefox 59",
+        "document.location": "https://shop.com/cart",
+        "document.referer": "https://shop.com/checkout",
+        "date": "2018-04-04T07:59:13.286000Z"
+    },
+    {
+        "client_id": "user15",
+        "User-Agent": "Firefox 59",
+        "document.location": "https://shop.com/checkout",
+        "document.referer": "https://shop.com/cart",
+        "date": "2018-04-05T07:59:13.286000Z"
+    }
+]'''
+        links = fwl(log_str)
+        self.assertEqual(links, [
+            'https://referal.ours.com/?ref=0xc0ffee',
+            'https://referal.ours.com/?ref=0xc0ffee',
+        ])
