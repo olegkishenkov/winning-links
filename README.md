@@ -73,7 +73,7 @@ python winning_links.py log.json outpus.json
 # Demonstration on Windows
 Create and activate a virtual environment so that you could clean everything up after the demonstration:
 ``` shell script
-mkdir winning_links_demo
+mkdir winning_links_demo && cd winning_links_demo
 python -m venv env
 env\Scripts\activate
 ```
@@ -146,6 +146,7 @@ notepad output.json
 
 Do the clean-up:
 ``` shell script
+deactivate
 cd ..
-rmdir/q/s winning_links
+rmdir/q/s winning_links_demo
 ```
