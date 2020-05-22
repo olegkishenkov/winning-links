@@ -38,7 +38,7 @@ If you have logs in the form of
 ```
 just import ```winning_links``` and use its ```find_winning_links``` function
 ``` python
-import winning_links
+from winning_links import import winning_links
 
 with open('log.json') as log_fh:
     log_str = log_fh.read()
