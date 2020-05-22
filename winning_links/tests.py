@@ -1,5 +1,4 @@
 import unittest
-
 from winning_links import find_winning_links as fwl
 
 
