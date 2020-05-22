@@ -1,4 +1,5 @@
 import json
+import sys
 import urllib.parse
 
 import dateutil.parser
@@ -63,6 +64,10 @@ def find_winning_links(
 
 
 if __name__ == '__main__':
-    with open('log.json') as log_fh:
+    with open(sys.argv[1]) as log_fh:
         log_str = log_fh.read()
-    print(find_winning_links(log_str, client_ids=True))
+
+    output_str = find_winning_links(log_str, client_ids=True)
+
+    with open(sys.argv[2], 'w') as output_fh:
+        output_fh.write(json.dumps(output_str))
