@@ -8,12 +8,12 @@ a lightweight library that parses JSON logs from an online store and finds affil
 ## Setup
 Windows:
 ``` shell script
-python -m pip install --repository testpypi winning-links
+python -m pip install --index-url https://test.pypi.org/simple/ winning-links
 ```
 
 Linux:
 ``` shell script
-pip install --repository testpypi winning-links
+pip install --index-url https://test.pypi.org/simple/ winning-links
 ```
 
 ## Usage as a library
