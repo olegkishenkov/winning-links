@@ -1,8 +1,15 @@
 import json
+import logging
 import sys
 import urllib.parse
 
 import dateutil.parser
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s:%(levelname)s:%(message)s'
+)
+logger = logging.getLogger()
 
 
 def _is_checkout(link):
@@ -29,7 +36,9 @@ def find_winning_links(
         date_key='date',
 ):
     """
-    finds affiliate links that led a client to a shop
+    Finds affiliate links that led a client to a shop.
+    Each hop represents a single log entry, the outer loop walks through all the hops to the checkout page,
+    the second and the third loop trace back the chain of hops that is attached to the mentioned checkout-ending hop.
     :param log_str: a JSON-serialized log string with an array of objects with the following attributes: client_key,
     location_key, referer_key, date_key
     :param client_ids:
@@ -44,6 +53,13 @@ def find_winning_links(
     log = json.loads(log_str)
     winning_links = []
     for hop in filter(lambda _: _is_checkout(_[location_key]), log):
+        logger.debug(
+            'checking the hop from {} to {} by client {}'.format(
+                hop[referer_key],
+                hop[location_key],
+                hop[client_key]
+            )
+        )
         client = hop[client_key]
         log_this_client = list(filter(lambda _: _[client_key] == client, log))
         for hop_this in log_this_client:
@@ -64,6 +80,9 @@ def find_winning_links(
 
 
 if __name__ == '__main__':
+    if '--debug' in sys.argv:
+        logger.setLevel(logging.DEBUG)
+
     with open(sys.argv[1]) as log_fh:
         log_str = log_fh.read()
 
