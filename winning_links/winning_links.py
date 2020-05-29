@@ -3,6 +3,7 @@ import logging
 import pprint
 import sys
 from urllib.parse import urlparse, urljoin
+print(__name__, __package__, __file__)
 
 import dateutil.parser
 
@@ -108,18 +109,5 @@ def find_winning_links(
     return winning_links
 
 
-if __name__ == '__main__':
-    argv1 = list(sys.argv)
-    argv1.sort(key=lambda _: -_.startswith('--debug'))
-    try:
-        logger.setLevel(getattr(logging, argv1[0].split('=')[1]))
-    except IndexError:
-        pass
-
-    with open(sys.argv[1]) as log_fh:
-        log_str = log_fh.read()
-
-    output_str = find_winning_links(log_str, client_ids=True)
-
-    with open(sys.argv[2], 'w') as output_fh:
-        output_fh.write(json.dumps(output_str))
+# if __name__ == '__main__':
+# the script logic is implemented in __main__.py
