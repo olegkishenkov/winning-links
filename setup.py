@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="winning-links",
-    version="0.0.4",
+    version="0.0.5",
     author="olegkishenkov",
     author_email="oleg.kishenkov@gmail.com",
     description="a lightweight library for finding winning affiliate links",
