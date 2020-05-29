@@ -150,3 +150,9 @@ deactivate
 cd ..
 rmdir/q/s winning_links_demo
 ```
+
+# For Developers
+Pass the --debug=DEBUG argument to the script for extensive logging:
+``` shell script
+python -m winning_links log.json output.json --debug=DEBUG
+```

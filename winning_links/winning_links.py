@@ -57,6 +57,7 @@ def find_winning_links(
 
     log = json.loads(log_str)
     winning_links = []
+    logging.debug('initialized winning_links to []')
     for hop in filter(lambda _: _is_checkout(_[location_key]), log):
         logger.info(
             'checking the hop from {} to {} by client {}'.format(
@@ -108,8 +109,12 @@ def find_winning_links(
 
 
 if __name__ == '__main__':
-    if '--info' in sys.argv:
-        logger.setLevel(logging.DEBUG)
+    argv1 = list(sys.argv)
+    argv1.sort(key=lambda _: -_.startswith('--debug'))
+    try:
+        logger.setLevel(getattr(logging, argv1[0].split('=')[1]))
+    except IndexError:
+        pass
 
     with open(sys.argv[1]) as log_fh:
         log_str = log_fh.read()
