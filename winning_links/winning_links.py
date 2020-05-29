@@ -2,7 +2,6 @@ import json
 import logging
 import pprint
 import sys
-from datetime import datetime
 from urllib.parse import urlparse, urljoin
 
 import dateutil.parser
@@ -66,13 +65,6 @@ def find_winning_links(
                 hop[client_key]
             )
         )
-        # if _is_ours(hop[referer_key]):
-        #     winning_links.append(hop[referer_key])
-        #     logger.info('the head hop is winning! going to the next hop...')
-        #     continue
-        # if _is_theirs(hop[referer_key]):
-        #     logger.info('the head hop is losing! going to the next hop...')
-        #     continue
         client = hop[client_key]
         log_this_client = list(filter(lambda _: _[client_key] == client, log))
         log_this_client_len = len(log_this_client)
