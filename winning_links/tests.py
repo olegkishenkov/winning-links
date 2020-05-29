@@ -3,7 +3,7 @@ import unittest
 
 try:
     from winning_links import find_winning_links as fwl, _is_checkout, _is_ours, _is_theirs
-except ModuleNotFoundError:
+except (ImportError, ModuleNotFoundError) as e:
     from winning_links.winning_links import find_winning_links as fwl, _is_checkout, _is_ours, _is_theirs
 
 logging.basicConfig()
