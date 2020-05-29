@@ -2,9 +2,9 @@ import logging
 import unittest
 
 try:
-    from winning_links import find_winning_links as fwl
+    from winning_links import find_winning_links as fwl, _is_checkout, _is_ours, _is_theirs
 except ModuleNotFoundError:
-    from winning_links.winning_links import find_winning_links as fwl
+    from winning_links.winning_links import find_winning_links as fwl, _is_checkout, _is_ours, _is_theirs
 
 logging.basicConfig()
 winning_links_logger = logging.getLogger('winning_links')
@@ -214,7 +214,7 @@ class TestFindWinningLinks(unittest.TestCase):
         self.assertTrue(('user16', 'https://referal.ours.com/?ref=123hexcode') in fwl(log_str, client_ids=True))
 
     def test_find_winning_links__client_ours_to_index_to_products_to_cart_to_checkout(self):
-        log_str ='''[
+        log_str = '''[
     {
         "client_id": "user7",
         "User-Agent": "Chrome 65",
@@ -328,6 +328,35 @@ class TestFindWinningLinks(unittest.TestCase):
         ]'''
         self.assertTrue(('user7', 'https://referal.ours.com/?ref=0xc0ffee') in fwl(log_str, client_ids=True))
         self.assertFalse(('user8', 'https://ad.theirs1.com/?src=q1w2e3r4') in fwl(log_str, client_ids=True))
+
+
+class TestUnderscoreFunctions(unittest.TestCase):
+    def test__is_checkout__this_shop_checkout(self):
+        self.assertTrue(_is_checkout('https://shop.com/checkout'))
+
+    def test__is_checkout__another_shop_checkout(self):
+        self.assertFalse(_is_checkout('https://anothershop.com/checkout'))
+
+    def test__is_checkout__this_shop_product(self):
+        self.assertFalse(_is_checkout('https://shop.com/products/id?=25'))
+
+    def test__is_ours__ours(self):
+        self.assertTrue(_is_ours('https://referal.ours.com/?ref=0xc0ffee'))
+
+    def test__is_ours__shop(self):
+        self.assertFalse(_is_ours('https://shop.com/products/id?=10'))
+
+    def test__is_ours__theirs(self):
+        self.assertFalse(_is_ours('https://ad.theirs1.com/?src=q1w2e3r4'))
+
+    def test__is_theirs__thiers(self):
+        self.assertTrue(_is_theirs('https://ad.theirs1.com/?src=q1w2e3r4'))
+
+    def test__is_theirs__ours(self):
+        self.assertFalse(_is_theirs('https://referal.ours.com/?ref=0xc0ffee'))
+
+    def test__is_theirs__shop(self):
+        self.assertFalse(_is_ours('https://shop.com/products/id?=10'))
 
 
 if __name__ == '__main__':
