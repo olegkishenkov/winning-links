@@ -1,5 +1,9 @@
 import unittest
-from winning_links import find_winning_links as fwl
+
+try:
+    from winning_links import find_winning_links as fwl
+except ModuleNotFoundError:
+    from winning_links.winning_links import find_winning_links as fwl
 
 
 class TestFindWinningLinks(unittest.TestCase):
@@ -203,3 +207,7 @@ class TestFindWinningLinks(unittest.TestCase):
 ]'''
         self.assertTrue(('user15', 'https://referal.ours.com/?ref=0xc0ffee') in fwl(log_str, client_ids=True))
         self.assertTrue(('user16', 'https://referal.ours.com/?ref=123hexcode') in fwl(log_str, client_ids=True))
+
+
+if __name__ == '__main__':
+    unittest.main()
