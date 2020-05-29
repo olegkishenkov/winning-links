@@ -1,5 +1,6 @@
 import json
 import logging
+import pprint
 import sys
 from datetime import datetime
 from urllib.parse import urlparse, urljoin
@@ -7,7 +8,7 @@ from urllib.parse import urlparse, urljoin
 import dateutil.parser
 
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.WARNING,
     format='%(asctime)s:%(levelname)s:%(message)s'
 )
 logger = logging.getLogger(__name__)
@@ -58,7 +59,7 @@ def find_winning_links(
     log = json.loads(log_str)
     winning_links = []
     for hop in filter(lambda _: _is_checkout(_[location_key]), log):
-        logger.debug(
+        logger.info(
             'checking the hop from {} to {} by client {}'.format(
                 hop[referer_key],
                 hop[location_key],
@@ -67,10 +68,10 @@ def find_winning_links(
         )
         # if _is_ours(hop[referer_key]):
         #     winning_links.append(hop[referer_key])
-        #     logger.debug('the head hop is winning! going to the next hop...')
+        #     logger.info('the head hop is winning! going to the next hop...')
         #     continue
         # if _is_theirs(hop[referer_key]):
-        #     logger.debug('the head hop is losing! going to the next hop...')
+        #     logger.info('the head hop is losing! going to the next hop...')
         #     continue
         client = hop[client_key]
         log_this_client = list(filter(lambda _: _[client_key] == client, log))
@@ -81,33 +82,41 @@ def find_winning_links(
         while i < log_this_client_len:
             if not (log_this_client[i][location_key] == referer_prev):
                 i += 1
-                logger.debug('location != referer_prev, going to the next hop_...')
+                logger.info('location != referer_prev, going to the next hop_...')
                 continue
             if not dateutil.parser.parse(log_this_client[i][date_key]) < date_prev:
                 i += 1
-                logger.debug('this hop is fresher than the previous, going to the next hop...')
+                logger.info('this hop is fresher than the previous, going to the next hop...')
                 continue
             if _is_ours(log_this_client[i][referer_key]):
                 if client_ids:
                     winning_links.append((client, log_this_client[i][referer_key]))
                 else:
                     winning_links.append(log_this_client[i][referer_key])
-                logger.debug('a winning link found and stored! going to the next checkout case...')
+                logger.info('a winning link {} found and stored! \ngoing to the next checkout case...'.format(
+                        log_this_client[i][referer_key],
+                    )
+                )
                 break
             if _is_theirs(log_this_client[i][referer_key]):
-                logger.debug('a losing link found - this chain is our shame! going to the next checkout case...')
+                logger.info(
+                    'a losing link found {} - this chain is our shame! going to the next checkout case...'.format(
+                        log_this_client[i][referer_key],
+                    )
+                )
                 break
             referer_prev = log_this_client[i][referer_key]
-            i = 0
-            logger.debug('hop from {} to {} found, going back...'.format(
+            logger.info('hop from {} to {} found, going back...'.format(
                 log_this_client[i][referer_key],
                 log_this_client[i][location_key],
             ))
+            i = 0
+    logger.debug('winning_links {}'.format(pprint.pformat(winning_links)))
     return winning_links
 
 
 if __name__ == '__main__':
-    if '--debug' in sys.argv:
+    if '--info' in sys.argv:
         logger.setLevel(logging.DEBUG)
 
     with open(sys.argv[1]) as log_fh:
