@@ -1,9 +1,14 @@
+import logging
 import unittest
 
 try:
     from winning_links import find_winning_links as fwl
 except ModuleNotFoundError:
     from winning_links.winning_links import find_winning_links as fwl
+
+logging.basicConfig()
+winning_links_logger = logging.getLogger('winning_links')
+winning_links_logger.setLevel(logging.DEBUG)
 
 
 class TestFindWinningLinks(unittest.TestCase):
